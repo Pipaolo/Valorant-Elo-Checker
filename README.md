@@ -1,16 +1,15 @@
-# valorant_elo_tracker
+# Valorant Elo Tracker
 
-A new Flutter project.
+Quickly keep track on your valorant elo on the go.
 
-## Getting Started
+---
 
-This project is a starting point for a Flutter application.
+This project was heavily inspired by (https://github.com/RumbleMike/ValorantStreamOverlay) made by Rumblemike and is not affiliated with Riot Games.
 
-A few resources to get you started if this is your first Flutter project:
+## How to download:
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+Just go to the repository's releases page, and download the latest apk there.
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Note:
+
+The app does not store your credentials, so you need to relogin everytime you use it. This is made to ensure the privacy of the user.
