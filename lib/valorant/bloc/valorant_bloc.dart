@@ -27,15 +27,22 @@ class ValorantBloc extends Bloc<ValorantEvent, ValorantState> {
         yield ValorantLoading();
         final matches =
             await _valorantRepository.getCompetitiveDetails(event.user);
+
+        // Default to 0 if the player does not have any ranked matches.
         final latestRankedMatch = matches.firstWhere(
             (match) => match.competitiveMovement != "MOVEMENT_UNKNOWN",
             orElse: () => ValorantMatch.empty);
+
+        // Default to 0 if the player does not have any ranked matches.
         final elo = (latestRankedMatch == ValorantMatch.empty)
             ? 0
             : (latestRankedMatch.tierAfterUpdate * 100) -
                 300 +
                 latestRankedMatch.tierProgressAfterUpdate;
+
+        // Default to 0 if the player does not have any ranked matches.
         final rp = latestRankedMatch.tierProgressAfterUpdate;
+
         final latestThreeGames = _computeThreeLatestGames(matches);
 
         yield ValorantSuccess(
