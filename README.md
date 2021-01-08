@@ -20,6 +20,7 @@ Just go to the repository's releases page, and download the latest apk there and
 - Show current rank
 - Show current RP and ELO
 - Shows the last three ranked matches and it's amount of increase or decrease to the player's RP.
+- User can choose to save their account or not. This is so they do not have to login again.
 
 ## Note:
 
