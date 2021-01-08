@@ -23,7 +23,7 @@ class MatchRating extends StatelessWidget {
       ),
       child: Center(
         child: Text(
-          rating.toString(),
+          (rating > 0) ? '+$rating' : rating.toString(),
           style: TextStyle(
               color: (rating > 0) ? Colors.green : Colors.red,
               fontSize: boxWidth / 4.5),

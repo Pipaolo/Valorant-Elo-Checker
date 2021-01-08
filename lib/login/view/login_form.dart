@@ -28,6 +28,8 @@ class LoginForm extends StatelessWidget {
               const Padding(padding: EdgeInsets.all(12)),
               _PasswordInput(),
               const Padding(padding: EdgeInsets.all(12)),
+              _RegionInput(),
+              const Padding(padding: EdgeInsets.all(12)),
               _LoginButton(),
             ],
           ),
@@ -77,6 +79,55 @@ class _PasswordInput extends StatelessWidget {
         );
       },
     );
+  }
+}
+
+class _RegionInput extends StatelessWidget {
+  static const _regions = {
+    'na': "North America",
+    "ap": "Asia Pacific",
+    "eu": "Europe",
+    "kr": "Korea",
+  };
+
+  static const _defaultRegion = "ap";
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<LoginBloc, LoginState>(
+        buildWhen: (previous, current) => previous.region != current.region,
+        builder: (context, state) {
+          return Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(4),
+                topRight: Radius.circular(4),
+              ),
+              color: Colors.white,
+            ),
+            padding: const EdgeInsets.all(8),
+            child: DropdownButton(
+              isExpanded: true,
+              underline: Container(
+                height: 1,
+                color: VALORANT_RED,
+              ),
+              value: state.region.value,
+              hint: Text("Region"),
+              key: const Key('loginForm_regionInput_dropdownButton'),
+              onChanged: (region) =>
+                  context.read<LoginBloc>().add(LoginRegionChanged(region)),
+              items: _regions.keys
+                  .map(
+                    (key) => DropdownMenuItem(
+                      child: Text(_regions[key]),
+                      value: key,
+                    ),
+                  )
+                  .toList(),
+            ),
+          );
+        });
   }
 }
 

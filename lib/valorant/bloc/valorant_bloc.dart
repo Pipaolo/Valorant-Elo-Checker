@@ -23,53 +23,61 @@ class ValorantBloc extends Bloc<ValorantEvent, ValorantState> {
     ValorantEvent event,
   ) async* {
     if (event is ValorantCompetitiveDetailsFetched) {
-      yield ValorantLoading();
-      final matches =
-          await _valorantRepository.getCompetitiveDetails(event.user);
-      final latestRankedMatch = matches.firstWhere(
-          (match) => match.competitiveMovement != "MOVEMENT_UNKNOWN");
-      final elo = (latestRankedMatch.tierAfterUpdate * 100) -
-          300 +
-          latestRankedMatch.tierProgressAfterUpdate;
-      final rp = latestRankedMatch.tierProgressAfterUpdate;
+      try {
+        yield ValorantLoading();
+        final matches =
+            await _valorantRepository.getCompetitiveDetails(event.user);
+        final latestRankedMatch = matches.firstWhere(
+            (match) => match.competitiveMovement != "MOVEMENT_UNKNOWN");
+        final elo = (latestRankedMatch.tierAfterUpdate * 100) -
+            300 +
+            latestRankedMatch.tierProgressAfterUpdate;
+        final rp = latestRankedMatch.tierProgressAfterUpdate;
 
-      final latestThreeGames = _computeThreeLatestGames(matches);
+        final latestThreeGames = _computeThreeLatestGames(matches);
 
-      yield ValorantSuccess(matches, latestRankedMatch, latestThreeGames, elo,rp);
+        yield ValorantSuccess(
+            matches, latestRankedMatch, latestThreeGames, elo, rp);
+      } on Exception catch (e) {
+        yield ValorantFailure(
+            errorMessage: e.toString().replaceAll("Exception: ", ""));
+      }
     }
   }
 
   List<int> _computeThreeLatestGames(List<ValorantMatch> matches) {
     final points = [0, 0, 0];
+
     int count = 0;
-    int i = 0;
 
-    matches.forEach((match) {
-      if (count >= points.length - 1) {
-        return;
-      }
-
+    for (int i = 0; i < matches.length; i++) {
+      final match = matches[i];
       if (match.competitiveMovement == "MOVEMENT_UNKNOWN") {
       } else if (match.competitiveMovement == "PROMOTED") {
         int before = match.tierProgressBeforeUpdate;
         int after = match.tierProgressAfterUpdate;
         int differ = (after - before) + 100;
-        points[i++] = differ;
+        points[count] = differ;
         count++;
       } else if (match.competitiveMovement == "DEMOTED") {
         int before = match.tierProgressBeforeUpdate;
         int after = match.tierProgressAfterUpdate;
         int differ = (after - before) - 100;
-        points[i++] = differ;
+        points[count] = differ;
         count++;
       } else {
         int before = match.tierProgressBeforeUpdate;
         int after = match.tierProgressAfterUpdate;
         int differ = (after - before);
-        points[i++] = differ;
+        points[count] = differ;
         count++;
       }
-    });
+
+      if (count >= points.length) {
+        break;
+      }
+    }
+
     return points;
   }
 }

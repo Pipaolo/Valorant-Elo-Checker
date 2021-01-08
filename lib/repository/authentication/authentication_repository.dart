@@ -32,6 +32,7 @@ class AuthenticationRepository {
   Future<void> logIn({
     @required String username,
     @required String password,
+    @required String region,
   }) async {
     final sessionBody = {
       "client_id": "play-valorant-web-prod",
@@ -62,9 +63,11 @@ class AuthenticationRepository {
     final userId = await _getUserId(accessToken);
 
     loggedInUser = User(
-        entitlementsToken: entitlementsToken,
-        accessToken: accessToken,
-        id: userId);
+      entitlementsToken: entitlementsToken,
+      accessToken: accessToken,
+      id: userId,
+      region: region,
+    );
 
     _controller.add(loggedInUser);
   }

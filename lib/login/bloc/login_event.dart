@@ -16,6 +16,15 @@ class LoginUsernameChanged extends LoginEvent {
   List<Object> get props => [username];
 }
 
+class LoginRegionChanged extends LoginEvent {
+  LoginRegionChanged(this.region);
+
+  final String region;
+
+  @override
+  List<Object> get props => [region];
+}
+
 class LoginPasswordChanged extends LoginEvent {
   final String password;
 

@@ -1,9 +1,11 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:valorant_elo_tracker/authentication/bloc/authentication_bloc.dart';
 import 'package:valorant_elo_tracker/consts/colors.dart';
 import 'package:valorant_elo_tracker/consts/valorant_rankings.dart';
 import 'package:valorant_elo_tracker/home/view/match_rating.dart';
+import 'package:valorant_elo_tracker/router/router.gr.dart';
 
 import 'package:valorant_elo_tracker/valorant/bloc/valorant_bloc.dart';
 
@@ -13,7 +15,23 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(kToolbarHeight),
-        child: BlocBuilder<ValorantBloc, ValorantState>(
+        child: BlocConsumer<ValorantBloc, ValorantState>(
+          listener: (context, state) {
+            if (state is ValorantFailure) {
+              ScaffoldMessenger.of(context)
+                ..hideCurrentSnackBar()
+                ..showSnackBar(
+                  SnackBar(
+                    content: Text('ERROR: ${state.errorMessage}'),
+                  ),
+                );
+
+              // Reset Authentication and Navigate to Login Screen
+              BlocProvider.of<AuthenticationBloc>(context)
+                  .add(AuthenticationLogoutRequested());
+              AutoRouter.of(context).replace(LoginPageRoute());
+            }
+          },
           builder: (context, state) {
             if (state is ValorantSuccess) {
               return AppBar(
