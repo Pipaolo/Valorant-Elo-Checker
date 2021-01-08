@@ -114,7 +114,7 @@ class HomePage extends StatelessWidget {
   }
 
   _renderRankLogo(int rank) {
-    if (rank == 1 || rank == 2) {
+    if (rank == 1 || rank == 2 || rank == 0) {
       return Image(
         image: AssetImage('assets/images/1.png'),
         width: 150,

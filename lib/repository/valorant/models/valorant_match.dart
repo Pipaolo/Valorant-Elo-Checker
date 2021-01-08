@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 enum ValorantCompetitiveMovement {
   unknown,
   promoted,
@@ -9,17 +11,17 @@ enum ValorantCompetitiveMovement {
 }
 
 class ValorantMatch {
-  String matchID;
-  String mapID;
-  int matchStartTime;
-  int tierAfterUpdate;
-  int tierBeforeUpdate;
-  int tierProgressAfterUpdate;
-  int tierProgressBeforeUpdate;
-  int rankedRatingEarned;
-  String competitiveMovement;
+  final String matchID;
+  final String mapID;
+  final int matchStartTime;
+  final int tierAfterUpdate;
+  final int tierBeforeUpdate;
+  final int tierProgressAfterUpdate;
+  final int tierProgressBeforeUpdate;
+  final int rankedRatingEarned;
+  final String competitiveMovement;
 
-  ValorantMatch(
+  const ValorantMatch(
       {this.matchID,
       this.mapID,
       this.matchStartTime,
@@ -30,16 +32,48 @@ class ValorantMatch {
       this.rankedRatingEarned,
       this.competitiveMovement});
 
-  ValorantMatch.fromJson(Map<String, dynamic> json) {
-    matchID = json['MatchID'];
-    mapID = json['MapID'];
-    matchStartTime = json['MatchStartTime'];
-    tierAfterUpdate = json['TierAfterUpdate'];
-    tierBeforeUpdate = json['TierBeforeUpdate'];
-    tierProgressAfterUpdate = json['TierProgressAfterUpdate'];
-    tierProgressBeforeUpdate = json['TierProgressBeforeUpdate'];
-    rankedRatingEarned = json['RankedRatingEarned'];
+  static const empty = ValorantMatch(
+      matchID: "",
+      mapID: "",
+      matchStartTime: 0,
+      tierAfterUpdate: 0,
+      tierBeforeUpdate: 0,
+      tierProgressAfterUpdate: 0,
+      tierProgressBeforeUpdate: 0,
+      rankedRatingEarned: 0,
+      competitiveMovement: 'MOVEMENT_UNKNOWN');
 
-    competitiveMovement = json['CompetitiveMovement'];
+  Map<String, dynamic> toMap() {
+    return {
+      'MatchID': matchID,
+      'MapID': mapID,
+      'MatchStartTime': matchStartTime,
+      'TierAfterUpdate': tierAfterUpdate,
+      'TierBeforeUpdate': tierBeforeUpdate,
+      'TierProgressAfterUpdate': tierProgressAfterUpdate,
+      'TierProgressBeforeUpdate': tierProgressBeforeUpdate,
+      'RankedRatingEarned': rankedRatingEarned,
+      'CompetitiveMovement': competitiveMovement,
+    };
   }
+
+  factory ValorantMatch.fromMap(Map<String, dynamic> map) {
+    if (map == null) return null;
+    return ValorantMatch(
+      matchID: map['MatchID'],
+      mapID: map['MapID'],
+      matchStartTime: map['MatchStartTime'],
+      tierAfterUpdate: map['TierAfterUpdate'],
+      tierBeforeUpdate: map['TierBeforeUpdate'],
+      tierProgressAfterUpdate: map['TierProgressAfterUpdate'],
+      tierProgressBeforeUpdate: map['TierProgressBeforeUpdate'],
+      rankedRatingEarned: map['RankedRatingEarned'],
+      competitiveMovement: map['CompetitiveMovement'],
+    );
+  }
+
+  String toJson() => json.encode(toMap());
+
+  factory ValorantMatch.fromJson(String source) =>
+      ValorantMatch.fromMap(json.decode(source));
 }

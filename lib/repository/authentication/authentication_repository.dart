@@ -55,8 +55,11 @@ class AuthenticationRepository {
     // Use the generated session for logging in.
     var authResponse = await dioClient.dio.put(URL, data: jsonEncode(authBody));
 
-    var rawAccessToken = authResponse.data['response']['parameters']['uri'];
+    if (authResponse.data['error'] != null) {
+      throw Exception("Authentication Failed");
+    }
 
+    var rawAccessToken = authResponse.data['response']['parameters']['uri'];
     final accessToken = parseAccessToken(rawAccessToken);
     final entitlementsToken = await _getEntitlementsToken(accessToken);
     final userId = await _getUserId(accessToken);

@@ -19,7 +19,7 @@ class ValorantRepository {
       final rawMatches = jsonDecode(response.body)['Matches'];
 
       final matches = (rawMatches as List<dynamic>)
-          .map((match) => ValorantMatch.fromJson(match))
+          .map((match) => ValorantMatch.fromMap(match))
           .toList();
 
       if (matches.isEmpty) {

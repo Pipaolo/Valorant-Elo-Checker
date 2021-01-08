@@ -1,7 +1,7 @@
 const Map<String, String> valorantRankings = {
   "0": "Unrated",
-  "1": "Unknown 1",
-  "2": "Unknown 2",
+  "1": "Unranked",
+  "2": "Unranked",
   "3": "Iron 1",
   "4": "Iron 2",
   "5": "Iron 3",
