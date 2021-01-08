@@ -30,5 +30,5 @@ The app does not store your credentials, so you need to relogin everytime you us
 
 ## Screenshots:
 
-!(LoginPage)[https://github.com/Pipaolo/Valorant-Elo-Checker/screenshot_1.png]
-!(HomePage)[https://github.com/Pipaolo/Valorant-Elo-Checker/screenshot_2.png]
+![LoginPage](https://raw.githubusercontent.com/Pipaolo/Valorant-Elo-Checker/main/screenshot_1.png)
+![HomePage](https://raw.githubusercontent.com/Pipaolo/Valorant-Elo-Checker/main/screenshot_2.png)
