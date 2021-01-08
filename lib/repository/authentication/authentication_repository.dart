@@ -13,17 +13,18 @@ const String URL = 'https://auth.riotgames.com/api/v1/authorization';
 enum AuthenticationStatus { unknown, authenticated, unauthenticated }
 
 class AuthenticationRepository {
+  AuthenticationRepository({@required this.dioClient})
+      : assert(dioClient != null);
+
   final _controller = StreamController<User>();
-
-  final dioClient = DioClient();
-
-  User loggedInUser;
+  final DioClient dioClient;
+  User _loggedInUser;
 
   Stream<User> get user async* {
-    if (loggedInUser == null) {
+    if (_loggedInUser == null) {
       yield User.empty;
     } else {
-      yield loggedInUser;
+      yield _loggedInUser;
     }
     yield* _controller.stream;
   }
@@ -64,14 +65,14 @@ class AuthenticationRepository {
     final entitlementsToken = await _getEntitlementsToken(accessToken);
     final userId = await _getUserId(accessToken);
 
-    loggedInUser = User(
+    _loggedInUser = User(
       entitlementsToken: entitlementsToken,
       accessToken: accessToken,
       id: userId,
       region: region,
     );
 
-    _controller.add(loggedInUser);
+    _controller.add(_loggedInUser);
   }
 
   Future<String> _getEntitlementsToken(String accessToken) async {
@@ -106,7 +107,8 @@ class AuthenticationRepository {
   }
 
   void logOut() {
-    loggedInUser = null;
+    _loggedInUser = null;
+    dioClient.clearCookies();
     _controller.add(User.empty);
   }
 
