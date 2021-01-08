@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:valorant_elo_tracker/authentication/bloc/authentication_bloc.dart';
 import 'package:valorant_elo_tracker/consts/colors.dart';
 import 'package:valorant_elo_tracker/home/view/home_appbar.dart';
+import 'package:valorant_elo_tracker/home/view/home_fab_menu.dart';
 import 'package:valorant_elo_tracker/home/view/match_rating.dart';
 import 'package:valorant_elo_tracker/router/router.gr.dart';
 
@@ -39,10 +40,7 @@ class HomePage extends StatelessWidget {
           return Container();
         },
       ),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: () {},
-      //   child: Icon(Icons.settings),
-      // ),
+      floatingActionButton: HomeFabMenu(),
     );
   }
 

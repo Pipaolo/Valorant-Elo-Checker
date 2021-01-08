@@ -6,6 +6,7 @@ import 'package:valorant_elo_tracker/consts/colors.dart';
 
 import 'package:valorant_elo_tracker/login/bloc/login_bloc.dart';
 import 'package:valorant_elo_tracker/repository/authentication/authentication_repository.dart';
+import 'package:valorant_elo_tracker/repository/user/user_repository.dart';
 import 'package:valorant_elo_tracker/router/router.gr.dart';
 import 'package:valorant_elo_tracker/valorant/bloc/valorant_bloc.dart';
 
@@ -39,6 +40,7 @@ class LoginPage extends StatelessWidget {
               return LoginBloc(
                 authenticationRepository:
                     RepositoryProvider.of<AuthenticationRepository>(context),
+                userRepository: RepositoryProvider.of<UserRepository>(context),
               );
             },
             child: LoginForm(),

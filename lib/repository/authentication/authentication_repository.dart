@@ -10,7 +10,11 @@ import 'package:valorant_elo_tracker/utils/utils.dart';
 
 const String URL = 'https://auth.riotgames.com/api/v1/authorization';
 
-enum AuthenticationStatus { unknown, authenticated, unauthenticated }
+enum AuthenticationStatus {
+  unknown,
+  authenticated,
+  unauthenticated,
+}
 
 class AuthenticationRepository {
   AuthenticationRepository({@required this.dioClient})

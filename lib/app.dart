@@ -8,18 +8,21 @@ import 'package:auto_route/auto_route.dart';
 import 'package:valorant_elo_tracker/valorant/bloc/valorant_bloc.dart';
 
 import 'authentication/bloc/authentication_bloc.dart';
+import 'repository/user/user_repository.dart';
 
 class App extends StatelessWidget {
-  const App(
-      {Key key,
-      @required this.authenticationRepository,
-      @required this.valorantRepository})
-      : assert(authenticationRepository != null),
-        assert(valorantRepository != null);
+  const App({
+    Key key,
+    @required this.authenticationRepository,
+    @required this.valorantRepository,
+    @required this.userRepository,
+  })  : assert(authenticationRepository != null),
+        assert(valorantRepository != null),
+        assert(userRepository != null);
 
   final AuthenticationRepository authenticationRepository;
-
   final ValorantRepository valorantRepository;
+  final UserRepository userRepository;
 
   @override
   Widget build(BuildContext context) {
@@ -27,13 +30,15 @@ class App extends StatelessWidget {
       providers: [
         RepositoryProvider.value(value: authenticationRepository),
         RepositoryProvider.value(value: valorantRepository),
+        RepositoryProvider.value(value: userRepository),
       ],
       child: MultiBlocProvider(
         providers: [
           BlocProvider(
             create: (_) => AuthenticationBloc(
               authenticationRepository: authenticationRepository,
-            ),
+              userRepository: userRepository,
+            )..add(AuthenticationStoredUserChecked()),
           ),
           BlocProvider(
             create: (_) => ValorantBloc(valorantRepository: valorantRepository),
@@ -52,10 +57,12 @@ class AppView extends StatelessWidget {
     return MaterialApp.router(
       title: "Valorant Elo Checker",
       theme: ThemeData(
-          fontFamily: "Anton",
-          primaryColor: VALORANT_RED,
-          accentColor: VALORANT_RED,
-          scaffoldBackgroundColor: VALORANT_BLACK),
+        fontFamily: "Anton",
+        primaryColor: VALORANT_RED,
+        accentColor: VALORANT_RED,
+        scaffoldBackgroundColor: VALORANT_BLACK,
+        unselectedWidgetColor: Colors.white,
+      ),
       debugShowCheckedModeBanner: false,
       routerDelegate: _appRouter.delegate(),
       routeInformationParser: _appRouter.defaultRouteParser(),

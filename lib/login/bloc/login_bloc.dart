@@ -8,16 +8,21 @@ import 'package:meta/meta.dart';
 import 'package:valorant_elo_tracker/login/login.dart';
 
 import 'package:valorant_elo_tracker/repository/authentication/authentication_repository.dart';
+import 'package:valorant_elo_tracker/repository/user/user_repository.dart';
 
 part 'login_event.dart';
 part 'login_state.dart';
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
   final AuthenticationRepository _authenticationRepository;
+  final UserRepository _userRepository;
 
   LoginBloc({
     @required AuthenticationRepository authenticationRepository,
+    @required UserRepository userRepository,
   })  : assert(authenticationRepository != null),
+        assert(userRepository != null),
+        _userRepository = userRepository,
         _authenticationRepository = authenticationRepository,
         super(const LoginState());
 
@@ -31,6 +36,8 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       yield _mapPasswordChangedToState(event, state);
     } else if (event is LoginRegionChanged) {
       yield _mapRegionChangedToState(event, state);
+    } else if (event is LoginSaveCredentialsChanged) {
+      yield _mapSaveCredentialsChangedToState(event, state);
     } else if (event is LoginSubmitted) {
       yield* _mapLoginSubmittedToState(event, state);
     }
@@ -41,7 +48,8 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     final username = Username.dirty(event.username);
     return state.copyWith(
         username: username,
-        status: Formz.validate([state.password, state.region, username]));
+        status: Formz.validate(
+            [state.password, state.region, state.saveCredentials, username]));
   }
 
   LoginState _mapPasswordChangedToState(
@@ -49,7 +57,8 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     final password = Password.dirty(event.password);
     return state.copyWith(
         password: password,
-        status: Formz.validate([state.username, state.region, password]));
+        status: Formz.validate(
+            [state.username, state.region, state.saveCredentials, password]));
   }
 
   LoginState _mapRegionChangedToState(
@@ -57,7 +66,18 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     final region = Region.dirty(event.region);
     return state.copyWith(
         region: region,
-        status: Formz.validate([state.username, state.password, region]));
+        status: Formz.validate(
+            [state.username, state.password, state.saveCredentials, region]));
+  }
+
+  LoginState _mapSaveCredentialsChangedToState(
+      LoginSaveCredentialsChanged event, LoginState state) {
+    final saveCredentials = SaveCredentials.dirty(event.saveCredentials);
+    return state.copyWith(
+      saveCredentials: saveCredentials,
+      status: Formz.validate(
+          [state.username, state.password, state.region, saveCredentials]),
+    );
   }
 
   Stream<LoginState> _mapLoginSubmittedToState(
@@ -70,6 +90,13 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
           password: state.password.value,
           region: state.region.value,
         );
+
+        if (state.saveCredentials.value) {
+          await _userRepository.storeUser(
+              username: state.username.value,
+              password: state.password.value,
+              region: state.region.value);
+        }
 
         yield state.copyWith(status: FormzStatus.submissionSuccess);
       } on Exception catch (_) {

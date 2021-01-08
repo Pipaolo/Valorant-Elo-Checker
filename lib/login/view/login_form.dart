@@ -30,6 +30,7 @@ class LoginForm extends StatelessWidget {
               const Padding(padding: EdgeInsets.all(12)),
               _RegionInput(),
               const Padding(padding: EdgeInsets.all(12)),
+              _SaveCredentialsInput(),
               _LoginButton(),
             ],
           ),
@@ -76,6 +77,34 @@ class _PasswordInput extends StatelessWidget {
             labelText: 'Password',
             errorText: state.password.invalid ? 'Invalid password' : null,
           ),
+        );
+      },
+    );
+  }
+}
+
+class _SaveCredentialsInput extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<LoginBloc, LoginState>(
+      buildWhen: (previous, current) =>
+          previous.saveCredentials != current.saveCredentials,
+      builder: (context, state) {
+        return Row(
+          children: [
+            Checkbox(
+              value: state.saveCredentials.value,
+              onChanged: (e) => context.read<LoginBloc>().add(
+                    LoginSaveCredentialsChanged(e),
+                  ),
+            ),
+            Text(
+              "Save Credentials",
+              style: TextStyle(
+                color: Colors.white,
+              ),
+            ),
+          ],
         );
       },
     );
