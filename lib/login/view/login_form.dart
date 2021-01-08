@@ -90,8 +90,6 @@ class _RegionInput extends StatelessWidget {
     "kr": "Korea",
   };
 
-  static const _defaultRegion = "ap";
-
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<LoginBloc, LoginState>(
