@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:valorant_elo_tracker/authentication/bloc/authentication_bloc.dart';
 import 'package:valorant_elo_tracker/consts/colors.dart';
-import 'package:valorant_elo_tracker/consts/valorant_rankings.dart';
+import 'package:valorant_elo_tracker/home/view/home_appbar.dart';
 import 'package:valorant_elo_tracker/home/view/match_rating.dart';
 import 'package:valorant_elo_tracker/router/router.gr.dart';
 
@@ -13,95 +13,72 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(kToolbarHeight),
-        child: BlocConsumer<ValorantBloc, ValorantState>(
-          listener: (context, state) {
-            if (state is ValorantFailure) {
-              ScaffoldMessenger.of(context)
-                ..hideCurrentSnackBar()
-                ..showSnackBar(
-                  SnackBar(
-                    content: Text('ERROR: ${state.errorMessage}'),
-                  ),
-                );
-
-              // Reset Authentication and Navigate to Login Screen
-              BlocProvider.of<AuthenticationBloc>(context)
-                  .add(AuthenticationLogoutRequested());
-              AutoRouter.of(context).replace(LoginPageRoute());
-            }
-          },
-          builder: (context, state) {
-            if (state is ValorantSuccess) {
-              return AppBar(
-                title: Text(valorantRankings[
-                    state.latestRankedMatch.tierAfterUpdate.toString()]),
-                actions: [
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
-                    child: Row(
-                      children: [
-                        Text('${state.rp} RP'),
-                        VerticalDivider(
-                          width: 8,
-                          color: Colors.white,
-                          indent: 10,
-                          endIndent: 10,
-                        ),
-                        Text('${state.elo} ELO')
-                      ],
-                    ),
-                  ),
-                ],
+      appBar: HomeAppbar(),
+      body: BlocConsumer<ValorantBloc, ValorantState>(
+        listener: (context, state) {
+          if (state is ValorantFailure) {
+            ScaffoldMessenger.of(context)
+              ..hideCurrentSnackBar()
+              ..showSnackBar(
+                SnackBar(
+                  content: Text('ERROR: ${state.errorMessage}'),
+                ),
               );
-            }
-            return AppBar(
-              title: const Text('Home'),
-            );
-          },
-        ),
-      ),
-      body: BlocBuilder<ValorantBloc, ValorantState>(
+            // Reset Authentication and Navigate to Login Screen
+            BlocProvider.of<AuthenticationBloc>(context)
+                .add(AuthenticationLogoutRequested());
+            AutoRouter.of(context).replace(LoginPageRoute());
+          }
+        },
         builder: (context, state) {
           if (state is ValorantSuccess) {
-            return RefreshIndicator(
-              onRefresh: () async {
-                return await _refresh(context);
-              },
-              child: ListView(
-                children: [
-                  Container(
-                    alignment: Alignment.center,
-                    width: double.infinity,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        const SizedBox(
-                          height: 100,
-                        ),
-                        _renderRankLogo(
-                            state.latestRankedMatch.tierAfterUpdate),
-                        const SizedBox(
-                          height: 100,
-                        ),
-                        _renderThreeMatchRatings(
-                            state.latestThreeRatingChanges),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            );
+            return _renderSuccessState(context, state);
           } else if (state is ValorantLoading) {
-            return Center(
-              child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(VALORANT_RED),
-              ),
-            );
+            return _renderLoadingState();
           }
           return Container();
         },
+      ),
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: () {},
+      //   child: Icon(Icons.settings),
+      // ),
+    );
+  }
+
+  Widget _renderSuccessState(BuildContext context, ValorantSuccess state) {
+    return RefreshIndicator(
+      onRefresh: () async {
+        return await _refresh(context);
+      },
+      child: ListView(
+        children: [
+          Container(
+            alignment: Alignment.center,
+            width: double.infinity,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const SizedBox(
+                  height: 100,
+                ),
+                _renderRankLogo(state.latestRankedMatch.tierAfterUpdate),
+                const SizedBox(
+                  height: 100,
+                ),
+                _renderThreeMatchRatings(state.latestThreeRatingChanges),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _renderLoadingState() {
+    return Center(
+      child: CircularProgressIndicator(
+        valueColor: AlwaysStoppedAnimation<Color>(VALORANT_RED),
       ),
     );
   }

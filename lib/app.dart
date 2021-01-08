@@ -54,6 +54,7 @@ class AppView extends StatelessWidget {
       theme: ThemeData(
           fontFamily: "Anton",
           primaryColor: VALORANT_RED,
+          accentColor: VALORANT_RED,
           scaffoldBackgroundColor: VALORANT_BLACK),
       debugShowCheckedModeBanner: false,
       routerDelegate: _appRouter.delegate(),
