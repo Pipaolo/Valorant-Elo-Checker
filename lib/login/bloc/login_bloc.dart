@@ -4,6 +4,7 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 
 import 'package:formz/formz.dart';
+import 'package:logger/logger.dart';
 import 'package:meta/meta.dart';
 import 'package:valorant_elo_tracker/login/login.dart';
 
@@ -16,12 +17,16 @@ part 'login_state.dart';
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
   final AuthenticationRepository _authenticationRepository;
   final UserRepository _userRepository;
+  final Logger _logger;
 
   LoginBloc({
     @required AuthenticationRepository authenticationRepository,
     @required UserRepository userRepository,
+    @required Logger logger,
   })  : assert(authenticationRepository != null),
         assert(userRepository != null),
+        assert(logger != null),
+        _logger = logger,
         _userRepository = userRepository,
         _authenticationRepository = authenticationRepository,
         super(const LoginState());
@@ -99,7 +104,24 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         }
 
         yield state.copyWith(status: FormzStatus.submissionSuccess);
-      } on Exception catch (_) {
+      } on Exception catch (e) {
+        _logger.e(
+            """
+        AUTHENTICATION ERROR :< :
+
+        $e
+        
+        --------------------------------------------------
+
+        Kindly take a screenshot of this error and open an issue in the
+        repository. I will try to fix this issue as soon as possible. 
+        Thank you and sorry for the inconvenience.
+        
+
+        Github link: https://github.com/Pipaolo/Valorant-Elo-Checker
+
+        -------------------------------------------------
+        """);
         yield state.copyWith(status: FormzStatus.submissionFailure);
       }
     }

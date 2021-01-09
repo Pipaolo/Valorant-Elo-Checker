@@ -18,7 +18,7 @@ class ValorantRepository {
         },
       ),
     );
-
+    print(response);
     if (response.statusCode == 201 || response.statusCode == 200) {
       final rawMatches = jsonDecode(response.data)['Matches'];
 
@@ -27,7 +27,7 @@ class ValorantRepository {
           .toList();
 
       if (matches.isEmpty) {
-        throw Exception("Your account does not exist in this region.");
+        throw Exception("Incorrect Region");
       }
 
       return matches;

@@ -53,15 +53,13 @@ class AuthenticationRepository {
     };
 
     // Generate a session for the device.
-    await dioClient.dio
-        .post(URL, data: jsonEncode(sessionBody))
-        .then((value) => print(value.data));
+    await dioClient.dio.post(URL, data: jsonEncode(sessionBody));
 
     // Use the generated session for logging in.
     var authResponse = await dioClient.dio.put(URL, data: jsonEncode(authBody));
 
     if (authResponse.data['error'] != null) {
-      throw Exception("Authentication Failed");
+      throw Exception(authResponse.data);
     }
 
     var rawAccessToken = authResponse.data['response']['parameters']['uri'];

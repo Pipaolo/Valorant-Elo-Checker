@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:logger/logger.dart';
 import 'package:valorant_elo_tracker/consts/colors.dart';
 import 'package:valorant_elo_tracker/repository/authentication/authentication_repository.dart';
 import 'package:valorant_elo_tracker/repository/valorant/valorant_repository.dart';
@@ -16,13 +17,16 @@ class App extends StatelessWidget {
     @required this.authenticationRepository,
     @required this.valorantRepository,
     @required this.userRepository,
+    @required this.logger,
   })  : assert(authenticationRepository != null),
         assert(valorantRepository != null),
-        assert(userRepository != null);
+        assert(userRepository != null),
+        assert(logger != null);
 
   final AuthenticationRepository authenticationRepository;
   final ValorantRepository valorantRepository;
   final UserRepository userRepository;
+  final Logger logger;
 
   @override
   Widget build(BuildContext context) {
@@ -31,6 +35,7 @@ class App extends StatelessWidget {
         RepositoryProvider.value(value: authenticationRepository),
         RepositoryProvider.value(value: valorantRepository),
         RepositoryProvider.value(value: userRepository),
+        RepositoryProvider.value(value: logger),
       ],
       child: MultiBlocProvider(
         providers: [
@@ -38,10 +43,14 @@ class App extends StatelessWidget {
             create: (_) => AuthenticationBloc(
               authenticationRepository: authenticationRepository,
               userRepository: userRepository,
+              logger: logger,
             )..add(AuthenticationStoredUserChecked()),
           ),
           BlocProvider(
-            create: (_) => ValorantBloc(valorantRepository: valorantRepository),
+            create: (_) => ValorantBloc(
+              valorantRepository: valorantRepository,
+              logger: logger,
+            ),
           ),
         ],
         child: AppView(),
@@ -69,6 +78,9 @@ class AppView extends StatelessWidget {
       builder: (context, router) {
         return router;
       },
+      // builder: (context, router) {
+      //   return LogConsoleOnShake(child: router);
+      // },
     );
   }
 }

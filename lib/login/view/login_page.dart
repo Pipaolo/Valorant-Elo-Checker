@@ -1,6 +1,8 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:logger/logger.dart';
+import 'package:logger_flutter/logger_flutter.dart';
 import 'package:valorant_elo_tracker/authentication/bloc/authentication_bloc.dart';
 import 'package:valorant_elo_tracker/consts/colors.dart';
 
@@ -33,17 +35,23 @@ class LoginPage extends StatelessWidget {
           centerTitle: true,
         ),
         backgroundColor: VALORANT_BLACK,
-        body: Padding(
-          padding: const EdgeInsets.all(12),
-          child: BlocProvider(
-            create: (context) {
-              return LoginBloc(
-                authenticationRepository:
-                    RepositoryProvider.of<AuthenticationRepository>(context),
-                userRepository: RepositoryProvider.of<UserRepository>(context),
-              );
-            },
-            child: LoginForm(),
+        body: LogConsoleOnShake(
+          debugOnly: false,
+          dark: true,
+          child: Padding(
+            padding: const EdgeInsets.all(12),
+            child: BlocProvider(
+              create: (context) {
+                return LoginBloc(
+                  logger: RepositoryProvider.of<Logger>(context),
+                  authenticationRepository:
+                      RepositoryProvider.of<AuthenticationRepository>(context),
+                  userRepository:
+                      RepositoryProvider.of<UserRepository>(context),
+                );
+              },
+              child: LoginForm(),
+            ),
           ),
         ),
       ),

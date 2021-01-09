@@ -28,7 +28,6 @@ class UserRepository {
   }
 
   Future<bool> checkStoredUser() async {
-    print("Checking stored user!");
     final box = await Hive.openBox("auth");
     return box.get("user") != null;
   }

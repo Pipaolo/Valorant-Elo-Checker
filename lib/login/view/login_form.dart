@@ -14,7 +14,8 @@ class LoginForm extends StatelessWidget {
               ..hideCurrentSnackBar()
               ..showSnackBar(
                 const SnackBar(
-                  content: Text("Authentication Failure"),
+                  content: Text(
+                      "ERROR: Authentication Failure \n Shake the device to see logs."),
                 ),
               );
           }
@@ -99,7 +100,7 @@ class _SaveCredentialsInput extends StatelessWidget {
                   ),
             ),
             Text(
-              "Save Credentials",
+              "Stay signed in",
               style: TextStyle(
                 color: Colors.white,
               ),

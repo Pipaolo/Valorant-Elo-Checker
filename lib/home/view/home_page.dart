@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:logger_flutter/logger_flutter.dart';
 import 'package:valorant_elo_tracker/authentication/bloc/authentication_bloc.dart';
 import 'package:valorant_elo_tracker/consts/colors.dart';
 import 'package:valorant_elo_tracker/home/view/home_appbar.dart';
@@ -15,30 +16,35 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: HomeAppbar(),
-      body: BlocConsumer<ValorantBloc, ValorantState>(
-        listener: (context, state) {
-          if (state is ValorantFailure) {
-            ScaffoldMessenger.of(context)
-              ..hideCurrentSnackBar()
-              ..showSnackBar(
-                SnackBar(
-                  content: Text('ERROR: ${state.errorMessage}'),
-                ),
-              );
-            // Reset Authentication and Navigate to Login Screen
-            BlocProvider.of<AuthenticationBloc>(context)
-                .add(AuthenticationLogoutRequested());
-            AutoRouter.of(context).replace(LoginPageRoute());
-          }
-        },
-        builder: (context, state) {
-          if (state is ValorantSuccess) {
-            return _renderSuccessState(context, state);
-          } else if (state is ValorantLoading) {
-            return _renderLoadingState();
-          }
-          return Container();
-        },
+      body: LogConsoleOnShake(
+        debugOnly: false,
+        dark: true,
+        child: BlocConsumer<ValorantBloc, ValorantState>(
+          listener: (context, state) {
+            if (state is ValorantFailure) {
+              ScaffoldMessenger.of(context)
+                ..hideCurrentSnackBar()
+                ..showSnackBar(
+                  SnackBar(
+                    content: Text(
+                        'ERROR: ${state.errorMessage}. \n Shake the device to see logs.'),
+                  ),
+                );
+              // Reset Authentication and Navigate to Login Screen
+              BlocProvider.of<AuthenticationBloc>(context)
+                  .add(AuthenticationLogoutRequested());
+              AutoRouter.of(context).replace(LoginPageRoute());
+            }
+          },
+          builder: (context, state) {
+            if (state is ValorantSuccess) {
+              return _renderSuccessState(context, state);
+            } else if (state is ValorantLoading) {
+              return _renderLoadingState();
+            }
+            return Container();
+          },
+        ),
       ),
       floatingActionButton: HomeFabMenu(),
     );
